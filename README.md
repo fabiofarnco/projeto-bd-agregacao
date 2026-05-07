@@ -8,11 +8,19 @@ Projeto desenvolvido em PostgreSQL para demonstrar conceitos de modelagem de ban
 
 ---
 
+# Objetivo do Projeto
+
+O sistema simula o gerenciamento de funcionários, dependentes, projetos e equipamentos utilizados dentro da empresa.
+
+O projeto foi criado para aplicar conceitos de modelagem conceitual e implementação em banco de dados relacional utilizando PostgreSQL.
+
+---
+
 # Autorrelacionamento
 
-A tabela `funcionario` possui um relacionamento com ela mesma através do campo `supervisor_id`.
+O autorrelacionamento foi aplicado na tabela `funcionario`.
 
-Isso permite representar hierarquias dentro da empresa, onde um funcionário pode supervisionar outros funcionários.
+O campo `supervisor_id` referencia a própria tabela, permitindo representar hierarquias entre funcionários.
 
 Exemplo:
 
@@ -23,31 +31,33 @@ Exemplo:
 
 # Dependência de Existência (Entidade Fraca)
 
-A tabela `dependente` depende da existência de um funcionário.
+A tabela `dependente` depende diretamente da existência de um funcionário.
 
-Por isso foi utilizado:
+Foi utilizado:
 
 ```sql
 ON DELETE CASCADE
 ```
 
-Assim, quando um funcionário é removido, seus dependentes também são removidos automaticamente.
+Isso garante que, ao excluir um funcionário, todos os seus dependentes também sejam removidos automaticamente.
 
 ---
 
 # Agregação
 
-A agregação foi utilizada para representar o uso de equipamentos em projetos.
+A agregação foi aplicada através da tabela `alocacao_equipamento`.
 
-A tabela `alocacao_equipamento` conecta:
+Essa tabela representa a relação entre:
 
 - Funcionário
 - Projeto
 - Equipamento
 
-Isso permite saber qual equipamento está sendo utilizado por determinado funcionário em um projeto específico.
+Assim, é possível controlar quais equipamentos estão sendo utilizados por funcionários em projetos específicos.
 
 ---
+
+# Diagrama ER
 
 ```mermaid
 erDiagram
@@ -82,12 +92,14 @@ erDiagram
     PROJETO ||--o{ ALOCACAO_EQUIPAMENTO : participa
 ```
 
+---
+
 # Tecnologias Utilizadas
 
 - PostgreSQL
 - SQL
 - GitHub
-- Mermaid Diagram
+- Mermaid
 
 ---
 
@@ -104,7 +116,9 @@ LEFT JOIN funcionario s
 ON f.supervisor_id = s.id;
 ```
 
-## Dependentes
+---
+
+## Dependentes e Funcionários
 
 ```sql
 SELECT
@@ -115,7 +129,9 @@ JOIN funcionario f
 ON d.funcionario_id = f.id;
 ```
 
-## Equipamentos por Projeto
+---
+
+## Equipamentos Utilizados em Projetos
 
 ```sql
 SELECT
