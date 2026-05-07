@@ -49,41 +49,38 @@ Isso permite saber qual equipamento está sendo utilizado por determinado funcio
 
 ---
 
-# Diagrama ER
-
 ```mermaid
 erDiagram
 
-FUNCIONARIO ||--o{ FUNCIONARIO : "gerencia"
-FUNCIONARIO ||--o{ DEPENDENTE : "possui"
-FUNCIONARIO }|--|{ PROJETO : "trabalha em"
+    FUNCIONARIO {
+        int id PK
+        string nome
+        int supervisor_id FK
+    }
 
-FUNCIONARIO {
-    int id PK
-    string nome
-    int supervisor_id FK
-}
+    DEPENDENTE {
+        int id PK
+        string nome
+        int funcionario_id FK
+    }
 
-DEPENDENTE {
-    int id PK
-    string nome
-    int funcionario_id FK
-}
+    PROJETO {
+        int id PK
+        string nome_projeto
+    }
 
-PROJETO {
-    int id PK
-    string nome_projeto
-}
+    ALOCACAO_EQUIPAMENTO {
+        int id PK
+        int funcionario_id FK
+        int projeto_id FK
+        string nome_equipamento
+    }
 
-ALOCACAO_EQUIPAMENTO {
-    int id PK
-    int funcionario_id FK
-    int projeto_id FK
-    string nome_equipamento
-}
+    FUNCIONARIO ||--o{ FUNCIONARIO : gerencia
+    FUNCIONARIO ||--o{ DEPENDENTE : possui
+    FUNCIONARIO ||--o{ ALOCACAO_EQUIPAMENTO : utiliza
+    PROJETO ||--o{ ALOCACAO_EQUIPAMENTO : participa
 ```
-
----
 
 # Tecnologias Utilizadas
 
