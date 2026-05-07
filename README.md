@@ -1,66 +1,31 @@
 # Sistema de Gestão de Projetos e Equipes
 
-Projeto desenvolvido em PostgreSQL para demonstrar conceitos de modelagem de banco de dados:
+Este projeto foi desenvolvido para representar conceitos de banco de dados relacional, como autorrelacionamento, dependência de existência e agregação.
 
-- Autorrelacionamento
-- Entidade fraca
-- Agregação
+## Objetivo
+Modelar funcionários, dependentes, projetos e equipamentos em um banco PostgreSQL.
 
----
+## Conceitos aplicados
 
-# Objetivo do Projeto
+### 1. Autorrelacionamento
+A tabela `funcionario` possui o campo `supervisor_id`, que aponta para o próprio funcionário.  
+Isso permite que um funcionário seja supervisor de outro funcionário.
 
-O sistema simula o gerenciamento de funcionários, dependentes, projetos e equipamentos utilizados dentro da empresa.
+### 2. Dependência de existência
+A tabela `dependente` depende da tabela `funcionario`.  
+Se um funcionário for excluído, seus dependentes também serão removidos com `ON DELETE CASCADE`.
 
-O projeto foi criado para aplicar conceitos de modelagem conceitual e implementação em banco de dados relacional utilizando PostgreSQL.
+### 3. Agregação
+A tabela `alocacao_equipamento` representa a relação entre `funcionario` e `projeto`, permitindo associar equipamentos a essa combinação.
 
----
-
-# Autorrelacionamento
-
-O autorrelacionamento foi aplicado na tabela `funcionario`.
-
-O campo `supervisor_id` referencia a própria tabela, permitindo representar hierarquias entre funcionários.
-
-Exemplo:
-
-- Ana supervisiona Carlos
-- Carlos supervisiona João
-
----
-
-# Dependência de Existência (Entidade Fraca)
-
-A tabela `dependente` depende diretamente da existência de um funcionário.
-
-Foi utilizado:
-
-```sql
-ON DELETE CASCADE
-```
-
-Isso garante que, ao excluir um funcionário, todos os seus dependentes também sejam removidos automaticamente.
-
----
-
-# Agregação
-
-A agregação foi aplicada através da tabela `alocacao_equipamento`.
-
-Essa tabela representa a relação entre:
-
-- Funcionário
-- Projeto
-- Equipamento
-
-Assim, é possível controlar quais equipamentos estão sendo utilizados por funcionários em projetos específicos.
-
----
-
-# Diagrama ER
+## Diagrama Mermaid
 
 ```mermaid
 erDiagram
+    FUNCIONARIO ||--o{ FUNCIONARIO : "gerencia"
+    FUNCIONARIO ||--o{ DEPENDENTE : "possui"
+    FUNCIONARIO }|--|{ PROJETO : "trabalha em (ALOCACAO)"
+    ALOCACAO ||--o{ EQUIPAMENTO : "utiliza (AGREGAÇÃO)"
 
     FUNCIONARIO {
         int id PK
@@ -79,68 +44,9 @@ erDiagram
         string nome_projeto
     }
 
-    ALOCACAO_EQUIPAMENTO {
+    EQUIPAMENTO {
         int id PK
+        string nome_equipamento
         int funcionario_id FK
         int projeto_id FK
-        string nome_equipamento
     }
-
-    FUNCIONARIO ||--o{ FUNCIONARIO : gerencia
-    FUNCIONARIO ||--o{ DEPENDENTE : possui
-    FUNCIONARIO ||--o{ ALOCACAO_EQUIPAMENTO : utiliza
-    PROJETO ||--o{ ALOCACAO_EQUIPAMENTO : participa
-```
-
----
-
-# Tecnologias Utilizadas
-
-- PostgreSQL
-- SQL
-- GitHub
-- Mermaid
-
----
-
-# Exemplos de Consultas SQL
-
-## Funcionários e Supervisores
-
-```sql
-SELECT
-    f.nome AS funcionario,
-    s.nome AS supervisor
-FROM funcionario f
-LEFT JOIN funcionario s
-ON f.supervisor_id = s.id;
-```
-
----
-
-## Dependentes e Funcionários
-
-```sql
-SELECT
-    d.nome AS dependente,
-    f.nome AS funcionario
-FROM dependente d
-JOIN funcionario f
-ON d.funcionario_id = f.id;
-```
-
----
-
-## Equipamentos Utilizados em Projetos
-
-```sql
-SELECT
-    f.nome AS funcionario,
-    p.nome_projeto,
-    a.nome_equipamento
-FROM alocacao_equipamento a
-JOIN funcionario f
-ON a.funcionario_id = f.id
-JOIN projeto p
-ON a.projeto_id = p.id;
-```
