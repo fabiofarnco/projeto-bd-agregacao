@@ -22,11 +22,6 @@ A tabela `alocacao_equipamento` representa a relação entre `funcionario` e `pr
 
 ```mermaid
 erDiagram
-    FUNCIONARIO ||--o{ FUNCIONARIO : "gerencia"
-    FUNCIONARIO ||--o{ DEPENDENTE : "possui"
-    FUNCIONARIO }|--|{ PROJETO : "trabalha em (ALOCACAO)"
-    ALOCACAO ||--o{ EQUIPAMENTO : "utiliza (AGREGAÇÃO)"
-
     FUNCIONARIO {
         int id PK
         string nome
@@ -44,9 +39,15 @@ erDiagram
         string nome_projeto
     }
 
-    EQUIPAMENTO {
+    ALOCACAO_EQUIPAMENTO {
         int id PK
-        string nome_equipamento
         int funcionario_id FK
         int projeto_id FK
+        string nome_equipamento
     }
+
+    FUNCIONARIO ||--o{ FUNCIONARIO : supervisiona
+    FUNCIONARIO ||--o{ DEPENDENTE : possui
+    FUNCIONARIO ||--o{ ALOCACAO_EQUIPAMENTO : participa
+    PROJETO ||--o{ ALOCACAO_EQUIPAMENTO : recebe
+```
